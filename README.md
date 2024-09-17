@@ -6,4 +6,7 @@ Image pipeline equipped for calibration and processing of FITS images. Analysis 
 - this program should function in a manner similar to AstroImageJ, in a condensed manner.
 
 ## Data and Output
+- Medians of flat and bias frames are computed and plotted as shown below:
 ![image](./static/master_frames.png)
+- Light frames can be displayed in a similar manner:
+![image](./static/light_frame.png)
