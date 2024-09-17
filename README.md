@@ -13,3 +13,9 @@ Image pipeline equipped for calibration and processing of FITS images. Analysis 
 - Light frames can be displayed in a similar manner:
   
 ![image](./static/light_frame.png)
+
+##Some CSV Functionality Underway (like all other parts of this project)
+- CSV files of measurements (built by standalone pipelines) can also be analyzed via the csv_functionality script.
+- This can be utilized for testing purposes as well as confirmation of pipeline accuracy.
+- To ensure proper function, user must provide a file with a relative flux measurement and some type of time series (JD, MJD, etc...)
+
