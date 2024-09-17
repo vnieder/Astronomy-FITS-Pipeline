@@ -7,9 +7,9 @@ Image pipeline equipped for calibration and processing of FITS images. Analysis 
 
 ## Data and Output
 - Medians of flat and bias frames are computed and plotted as shown below:
-  <br>
+
 ![image](./static/master_frames.png)
-<br>
+
 - Light frames can be displayed in a similar manner:
-  <br>
+  
 ![image](./static/light_frame.png)
