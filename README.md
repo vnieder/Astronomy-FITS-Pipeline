@@ -4,3 +4,6 @@ Image pipeline equipped for calibration and processing of FITS images. Analysis 
 - development of graphical user interface and existing features in progress.
 - ideally, the final prodict will support analysis of existing tess data with libraries such as lightkurve and astropy, as well as personal observation data.
 - this program should function in a manner similar to AstroImageJ, in a condensed manner.
+
+## Data and Output
+![image](./static/master_frames.png)
