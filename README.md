@@ -19,3 +19,6 @@ Image pipeline equipped for calibration and processing of FITS images. Analysis 
 - This can be utilized for testing purposes as well as confirmation of pipeline accuracy.
 - To ensure proper function, user must provide a file with a relative flux measurement and some type of time series (JD, MJD, etc...)
 
+## Astrometry.net API for WCS Retrieval
+- Currently calls generate an unformatted FITS header
+- Header will ideally be written to the given FITS file for later use in the stacking and star location features.
