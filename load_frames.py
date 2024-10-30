@@ -1,7 +1,3 @@
-
-'''
-load images the same way as did last time
-'''
 import os
 import collections 
 from astropy.io import fits
