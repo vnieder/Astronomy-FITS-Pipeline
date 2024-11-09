@@ -18,6 +18,9 @@ Image pipeline equipped for calibration and processing of FITS images. Analysis 
   
 ![image](./static/comparison.png)
 
+- Current adjustments remove some background, and apply reasonable lens/CCD corrections.
+- Vignetting is visually reduced, as well as haze.
+
 ## Some CSV Functionality Underway
 - CSV files of measurements (built by standalone pipelines) can also be analyzed via the csv_functionality script.
 - This can be utilized for testing purposes as well as confirmation of pipeline accuracy.
