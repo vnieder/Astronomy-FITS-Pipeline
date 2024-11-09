@@ -10,7 +10,7 @@ Image pipeline equipped for calibration and processing of FITS images. Analysis 
 
 ![image](./static/master_frames.png)
 
-- Comparison of uncalibrated and calibrated images (AstroImageJ window):
+- Comparison of uncalibrated and calibrated images, respectively (AstroImageJ window):
   
 ![image](./static/comparison.png)
 
