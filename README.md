@@ -14,6 +14,10 @@ Image pipeline equipped for calibration and processing of FITS images. Analysis 
   
 ![image](./static/light_frame.png)
 
+- Comparison of uncalibrated and calibrated images (AstroImageJ window):
+  
+![image](./static/comparison.png)
+
 ## Some CSV Functionality Underway
 - CSV files of measurements (built by standalone pipelines) can also be analyzed via the csv_functionality script.
 - This can be utilized for testing purposes as well as confirmation of pipeline accuracy.
