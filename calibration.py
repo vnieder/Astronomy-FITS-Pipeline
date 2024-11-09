@@ -14,7 +14,6 @@ def make_subdir(directory):
     return calibrated_data
 
 def create_master_frames(directory):
-    #we should not need to define another imagecollection
     main_path = Path(directory)
     files = ccdp.ImageFileCollection(main_path)
     
