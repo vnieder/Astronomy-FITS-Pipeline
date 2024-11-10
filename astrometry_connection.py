@@ -25,7 +25,7 @@ timeout = 120
 - this will later be applied to processed light files when file formatting issues are resolved.
 '''
 
-#user defined file path
+#user defined
 filepath = '/Users/spencerfreeman/Desktop/stepUp/freeman2024-09-03/WASP-135b-0001_lrp.fit'
 filepath1 = '/Users/spencerfreeman/Desktop/stepUp/freeman2024-09-03/WASP-135b-0002_lrp.fit'
 filepath2 = '/Users/spencerfreeman/Desktop/stepUp/freeman2024-09-03/WASP-135b-0003_lrp.fit'
