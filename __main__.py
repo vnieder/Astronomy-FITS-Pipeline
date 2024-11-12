@@ -1,20 +1,13 @@
-from load_frames import *
-from calibration import *
+from calibration import create_master_frames, calibrate_light_frames
 from astrometry_connection import * 
-
-def load():
-    lights = load_light_frames(directory, light_frame_indicator)
-    flats = load_flat_frames(directory, flat_frame_indicator)
-    biases = load_bias_frames(directory, bias_frame_indicator)
-    print('total lights loaded: {0}'.format(len(lights)))
-    print('total flats loaded: {0}'.format(len(flats)))
-    print('total biases loaded: {0}'.format(len(biases)))
+import matplotlib.pyplot as plt
+from astropy.io import fits
 
 def calibrate(dir, transit_name):
     master_flat, master_bias = create_master_frames(dir)
-    calibrate_light_frames(dir, transit_name, master_flat, master_bias)
+    lights_calibrated = calibrate_light_frames(dir, transit_name, master_flat, master_bias)
     #in case we want to see master composite calibration frames
-    plt.show()
+    return lights_calibrated
 
 def solve():
     plate_solve_frame_list(paths)
@@ -22,6 +15,8 @@ def solve():
 if __name__ == "__main__":
     dir = '/Users/spencerfreeman/Desktop/stepUp/2024-09-4-skuban'
     transit_name = 'qatar-5b'
-    load()
-    calibrate(dir, transit_name)
-    solve()
+    lights_calibrated = calibrate(dir, transit_name)
+    hdulist = lights_calibrated[0].to_hdu()
+    plt.imshow(hdulist[0].data)
+    plt.show()
+    
