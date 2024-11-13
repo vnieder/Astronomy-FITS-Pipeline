@@ -14,6 +14,7 @@ def make_subdir(directory):
     return calibrated_data
 
 def create_master_frames(directory):
+    #we should not need to define another imagecollection
     main_path = Path(directory)
     files = ccdp.ImageFileCollection(main_path)
     
@@ -29,7 +30,6 @@ def create_master_frames(directory):
         bias_frame = CCDData.read(bias_file, unit=u.adu)
         bias_data.append(bias_frame)
     
-    reduced_images = ccdp.ImageFileCollection(calibrated_data)
     master_bias = ccdp.combine(bias_data, method='average', sigma_clip=True, sigma_clip_low_thresh=5, sigma_clip_high_thresh=5,
                                 sigma_clip_func=np.ma.median, sigma_clip_dev_func=mad_std, mem_limit=350e6)
 
@@ -53,14 +53,15 @@ def create_master_frames(directory):
     master_flat.meta['combined'] = True
     master_flat.write(calibrated_data / 'master_flat.fit', overwrite = True)
     
+    #delete statements likely assist in the memory overflow errors
+    del files
     return master_bias, master_flat
 
-#this is used in the stats associated with the flat field combination process, see arguments of ccdp.combine() function
+#used in the stats associated with the flat field combination process, see arguments of ccdp.combine() function
 def inv_median(a):
     return 1 / np.median(a)
     
 def calibrate_light_frames(directory, transit_name, master_bias, master_flat):
-    
     main_path = Path(directory)
     files = ccdp.ImageFileCollection(main_path)
     transit_name = transit_name
@@ -69,11 +70,16 @@ def calibrate_light_frames(directory, transit_name, master_bias, master_flat):
 
     #process each light frame in a compact manner and add to list, might need to add a list of the processed lights, removed to save on space.
     counter=1
+    light_frames = []
     for light in lights:
         light_frame = CCDData.read(light, unit=u.adu)
         reduced = ccdp.ccd_process(light_frame, master_bias=master_bias, master_flat=master_flat)
+        light_frames.append(reduced)
         reduced.write('{0}/example1-reduced/{1}_lrp_out_{2}.fit'.format(directory, transit_name, counter), overwrite=True)
         counter+=1
+        
+    del files
+    return light_frames
     
 if __name__ == "__main__":
     #writes the master flat and master bias to the subdirectory using newer method
