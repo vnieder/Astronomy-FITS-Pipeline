@@ -21,7 +21,7 @@ Image pipeline equipped for calibration and processing of FITS images. Analysis 
 
 ![image](./static/test.png)
 
-- Pipeline produces both seeing profiles and cumulative flux plots of both target and comparison star.
+- Pipeline produces both seeing profiles and cumulative flux plots of target and comparison star.
 ## Some CSV Functionality Underway
 - CSV files of measurements (built by standalone pipelines) can also be analyzed via the csv_functionality script.
 - This can be utilized for testing purposes as well as confirmation of pipeline accuracy.
