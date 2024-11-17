@@ -17,6 +17,8 @@ Image pipeline equipped for calibration and processing of FITS images. Analysis 
 - Current adjustments remove some background, and apply reasonable lens/CCD corrections.
 - Vignetting is visually reduced, as well as haze.
 
+![image](./static/test1.png)
+
 ![image](./static/test.png)
 
 - Pipeline produces both seeing profiles and cumulative flux plots of both target and comparison star.
