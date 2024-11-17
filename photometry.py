@@ -85,7 +85,6 @@ def closest_value(x_centoroids, y_centroids, x_pix_est, y_pix_est):
     return x, y
 
 def get_pixel_location(x_centoroids, y_centroids, x_pix_est, y_pix_est):
-    
     closest_x = x_pix_est
     closest_y = y_pix_est
     x_tolerance = 1
@@ -106,7 +105,6 @@ def get_pixel_location(x_centoroids, y_centroids, x_pix_est, y_pix_est):
 
 #we will be passing a CCDData object
 def perform_photometry(light_frames):
-    
     #TODO: these values must not cause errors if the cutout region is changed.
     target_x_est = 252.03    
     target_y_est = 327.26
@@ -123,11 +121,9 @@ def perform_photometry(light_frames):
         flux_tar = get_flux(light_frame, target_x_est, target_y_est, "Target", (500, 500), (2400, 2000))
         #TODO get better etsimates for comp star
         #flux_comp = get_flux(light_frame_CCDData, comp_x_est, comp_y_est, "Comparison", (500, 500))
-        
         target_flux_values.append(flux_tar)
         #comparison_flux_values.append(flux_comp)
         time.append(light_frame.header['DATE-OBS'])
-        
         
     return target_flux_values, comparison_flux_values, time
 
