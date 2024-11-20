@@ -19,6 +19,8 @@ import ccdproc as ccdp
 import matplotlib.pyplot as plt
 import numpy as np
 from pathlib import Path
+import pandas as pd
+import os
 
 '''We are currently passing rough estimates of pixel location and lining up with the best match on the chart provided by DAO'''
 
@@ -43,7 +45,8 @@ def get_flux(light_frame, x_pix_est, y_pix_est, target_name, size_cutout, positi
     bkg = Background2D(cutout.data, (50, 50), filter_size=(3, 3), sigma_clip=sigma_clip, bkg_estimator=bkg_estimator)
     cutout.data = cutout.data-bkg.background #subtract background from cutout data
     sources = get_sources(cutout.data)
-    x_objective, y_objective = closest_value(sources['xcentroid'], sources['ycentroid'], 252, 327)
+    x_objective, y_objective = return_x_y_from_max_flux(sources)
+    #closest_value(sources['xcentroid'], sources['ycentroid'], 252, 327)
     xycen = centroid_quadratic(cutout.data, xpeak=x_objective, ypeak=y_objective)
     
     #get the radial profile, this array might need to be larger
@@ -79,12 +82,28 @@ def get_sources(cutout_data):
             sources[col].info.format = '%.2f'  # for consistent table output
     return sources
 
+def return_x_y_from_max_flux(sources_data_frame):
+    max_flux = np.max(sources_data_frame['flux'])
+    max_index = -1
+    for i,flux in enumerate(sources_data_frame['flux']):
+        if(flux == max_flux):
+            max_index = i
+    
+    if(i == -1):
+        print("*** WARNING: Error in the max_flux target location mathod ***")
+        return -1,-1
+    else:
+        x = sources_data_frame['xcentroid'][max_index]
+        y = sources_data_frame['ycentroid'][max_index]
+        return x, y
+    
 def closest_value(x_centoroids, y_centroids, x_pix_est, y_pix_est):
     x = min(x_centoroids, key=lambda x: abs(x - x_pix_est))
     y = min(y_centroids, key=lambda x: abs(x - y_pix_est))
     return x, y
 
 def get_pixel_location(x_centoroids, y_centroids, x_pix_est, y_pix_est):
+    
     closest_x = x_pix_est
     closest_y = y_pix_est
     x_tolerance = 1
@@ -102,9 +121,31 @@ def get_pixel_location(x_centoroids, y_centroids, x_pix_est, y_pix_est):
     else:
         print("WARNING: pixel estimate was not satisfactory.")
         return x_pix_est, y_pix_est
+    
+def to_csv(array1, array2, directory_path, filename):
+    """
+    Takes two arrays, creates a DataFrame, and saves it as a CSV file.
+    """
+    # Create a DataFrame from the arrays
+    array1 = np.array(array1)
+    array2 = np.array(array2)
+    
+    array3 = np.array(array1/array2)
+    data = {'Target Flux': array1, 'Comparison Flux': array2, 'Relative Flux': array3}
+    df = pd.DataFrame(data)
+
+    # Create the full file path
+    file_path = os.path.join(directory_path, filename)
+
+    # Save the DataFrame to a CSV file
+    df.to_csv(file_path, index=False)
+
+    print(f"CSV file created at: {file_path}")
+    
 
 #we will be passing a CCDData object
 def perform_photometry(light_frames):
+    
     #TODO: these values must not cause errors if the cutout region is changed.
     target_x_est = 252.03    
     target_y_est = 327.26
@@ -120,11 +161,14 @@ def perform_photometry(light_frames):
         light_frame = CCDData.read(light_frame_CCDData, unit=u.adu)
         flux_tar = get_flux(light_frame, target_x_est, target_y_est, "Target", (500, 500), (2400, 2000))
         #TODO get better etsimates for comp star
-        #flux_comp = get_flux(light_frame_CCDData, comp_x_est, comp_y_est, "Comparison", (500, 500))
-        target_flux_values.append(flux_tar)
-        #comparison_flux_values.append(flux_comp)
-        time.append(light_frame.header['DATE-OBS'])
+        flux_comp = get_flux(light_frame, comp_x_est, comp_y_est, "Comparison", (500, 500), (350, 1350))
         
+        target_flux_values.append(flux_tar)
+        comparison_flux_values.append(flux_comp)
+        time.append(light_frame.header['DATE-OBS'])
+        print(i)
+    
+    to_csv(target_flux_values, comparison_flux_values,'/Users/spencerfreeman/Desktop/stepUp/2024-09-4-skuban/example1-reduced/', 'test.csv')
     return target_flux_values, comparison_flux_values, time
 
 if __name__ == "__main__":
