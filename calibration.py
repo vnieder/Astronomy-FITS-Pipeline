@@ -9,7 +9,7 @@ import numpy as np
 from pathlib import Path
 
 def make_subdir(directory):
-    calibrated_data = Path(directory, 'example1-reduced')
+    calibrated_data = Path(directory, 'master_frames_test')
     calibrated_data.mkdir(exist_ok=True)
     return calibrated_data
 
@@ -34,6 +34,7 @@ def create_master_frames(directory):
                                 sigma_clip_func=np.ma.median, sigma_clip_dev_func=mad_std, mem_limit=350e6)
 
     master_bias.meta['combined'] = True
+    master_bias.data = master_bias.data.astype('float32')
     master_bias.write(calibrated_data / 'master_bias.fit', overwrite=True)
 
     '''
@@ -51,6 +52,7 @@ def create_master_frames(directory):
                                 sigma_clip_func=np.ma.median, signma_clip_dev_func=mad_std, mem_limit=350e6)
 
     master_flat.meta['combined'] = True
+    master_flat.data = master_flat.data.astype('float32')
     master_flat.write(calibrated_data / 'master_flat.fit', overwrite = True)
     
     #delete statements likely assist in the memory overflow errors
@@ -74,8 +76,9 @@ def calibrate_light_frames(directory, transit_name, master_bias, master_flat):
     for light in lights:
         light_frame = CCDData.read(light, unit=u.adu)
         reduced = ccdp.ccd_process(light_frame, master_bias=master_bias, master_flat=master_flat)
+        reduced.data = reduced.data.astype('float32')
         light_frames.append(reduced)
-        reduced.write('{0}/example1-reduced/{1}_lrp_out_{2}.fit'.format(directory, transit_name, counter), overwrite=True)
+        reduced.write('{0}/test_output/{1}_lrp_out_{2}.fit'.format(directory, transit_name, counter), overwrite=True)
         counter+=1
         
     del files
@@ -84,8 +87,8 @@ def calibrate_light_frames(directory, transit_name, master_bias, master_flat):
 if __name__ == "__main__":
     #writes the master flat and master bias to the subdirectory using newer method
     #form of path may be important as of now, this should not matter.
-    dir = '/Users/spencerfreeman/Desktop/stepUp/2024-09-4-skuban'
+    dir_input = '/Users/spencerfreeman/Desktop/PersonalCS/CurrentPipeline/test_input'
     transit_name = 'qatar-5b'
-    master_flat, master_bias = create_master_frames(dir)
-    calibrate_light_frames(dir, transit_name, master_flat, master_bias)
+    master_flat, master_bias = create_master_frames(dir_input)
+    calibrate_light_frames(dir_input, transit_name, master_flat, master_bias)
     
