@@ -90,5 +90,7 @@ if __name__ == "__main__":
     dir_input = '/Users/spencerfreeman/Desktop/PersonalCS/CurrentPipeline/test_input'
     transit_name = 'qatar-5b'
     master_flat, master_bias = create_master_frames(dir_input)
+    plt.imshow(master_bias.data)
+    plt.show()
     calibrate_light_frames(dir_input, transit_name, master_flat, master_bias)
     
