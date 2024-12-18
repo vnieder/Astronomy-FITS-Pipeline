@@ -7,6 +7,9 @@ from load_frames import *
 import matplotlib.pyplot as plt
 import numpy as np
 from pathlib import Path
+from astropy.coordinates import SkyCoord
+import glob
+from astropy.io import fits
 
 def make_subdir(directory):
     calibrated_data = Path(directory, 'master_frames_test')
@@ -60,37 +63,95 @@ def create_master_frames(directory):
     return master_bias, master_flat
 
 #used in the stats associated with the flat field combination process, see arguments of ccdp.combine() function
-def inv_median(a):
+def inv_median(a) -> int:
     return 1 / np.median(a)
     
-def calibrate_light_frames(directory, transit_name, master_bias, master_flat):
+def calibrate_light_frames(directory:str, transit_name:str, master_bias:CCDData, master_flat:CCDData, target_coords_wcs:list) -> list:
     main_path = Path(directory)
     files = ccdp.ImageFileCollection(main_path)
-    transit_name = transit_name
+    
+    FOCALLEN = 3962.3999023437500 #mm
+    PIXELSIZE = 9 #um
+    pixscale=206.265*(PIXELSIZE/FOCALLEN)
+    
+    c=SkyCoord(target_coords_wcs[0],target_coords_wcs[1],frame='icrs',unit=(u.hourangle,u.degree))
+    ra=c.ra.degree; dec=c.dec.degree
+    
+    gain_readout = get_gain_readout_noise(directory, "bias", "frp")
+    gain = gain_readout[0]
+    readout_noise = gain_readout[1]
+    
     #obtain all of the light frames
     lights = files.files_filtered(imagetyp='Light Frame', include_path=True)
-
     #process each light frame in a compact manner and add to list, might need to add a list of the processed lights, removed to save on space.
     counter=1
     light_frames = []
     for light in lights:
+        print(f"Reducing light frames, flat fielding, debiasing, flipping : {counter}/{len(lights)}")
         light_frame = CCDData.read(light, unit=u.adu)
         reduced = ccdp.ccd_process(light_frame, master_bias=master_bias, master_flat=master_flat)
+        edit_header(reduced, ra, dec, pixscale, gain, readout_noise)
+        #compress to single precision image
         reduced.data = reduced.data.astype('float32')
         light_frames.append(reduced)
+        #write to the output directory, lets assume north is up and add functionality if neccessary.
         reduced.write('{0}/test_output/{1}_lrp_out_{2}.fit'.format(directory, transit_name, counter), overwrite=True)
         counter+=1
-        
     del files
     return light_frames
+
+def edit_header(reduced, ra, dec, pixscale, gain, readout_noise):
+    reduced.meta['epoch']=2000.0
+    reduced.meta['CRVAL1']=ra
+    reduced.meta['CRVAL2']=dec
+    reduced.meta['CRPIX1']=reduced.meta['NAXIS1']/2.0
+    reduced.meta['CRPIX2']=reduced.meta['NAXIS2']/2.0
+    reduced.meta['CDELT1']=-pixscale/3600.0 # minus for left east
+    reduced.meta['CDELT2']=pixscale/3600.0
+    reduced.meta['CTYPE1']='RA---TAN' # projection type
+    reduced.meta['CTYPE2']='DEC--TAN'
+    reduced.meta['GAIN']=(gain,'GAIN in e-/ADU')
+    reduced.meta['RDNOISE']=(readout_noise,'readout noise in electron')
+
+def get_gain_readout_noise(directory:str, bias_indicator:str, flat_indicator:str) -> list:
+    bias_list = glob.glob(directory + f"*{bias_indicator}*")
+    flat_list = glob.glob(directory + f"*{flat_indicator}*")
+    print(len(bias_list))
+    print(len(flat_list))
+    bias_data = []
+    flat_data = []
     
+    for bias_file in bias_list:
+        data = fits.getdata(bias_file)[1500-256:1500+256,1500-256:1500+256]
+        bias_data.append(data)
+    for flat_file in flat_list:
+        data = fits.getdata(flat_file)[1500-256:1500+256,1500-256:1500+256]
+        flat_data.append(data)
+    
+    bias_combined = np.median(bias_data, axis=0)
+    flat_combined = np.median(flat_data, axis=0)
+    
+    # Calculate gain and read noise
+    mean_flat = np.mean(flat_combined)
+    mean_bias = np.mean(bias_combined)
+    std_flat = np.std(flat_combined)
+    std_bias = np.std(bias_combined)
+
+    gain = (mean_flat - mean_bias) / (std_flat**2 - std_bias**2)
+    readnoise = gain * std_bias / np.sqrt(2)  
+      
+    print(f"gain: {gain}, readoout: {readnoise}")
+    return [gain, readnoise]
+
 if __name__ == "__main__":
     #writes the master flat and master bias to the subdirectory using newer method
     #form of path may be important as of now, this should not matter.
-    dir_input = '/Users/spencerfreeman/Desktop/PersonalCS/CurrentPipeline/test_input'
+    dir_input = '/Users/spencerfreeman/Desktop/PersonalCS/CurrentPipeline/test_input/'
     transit_name = 'qatar-5b'
+    target_coords_wcs = ["00:28:12.944", "+42:03:40.95"]
     master_flat, master_bias = create_master_frames(dir_input)
+    
     plt.imshow(master_bias.data)
     plt.show()
-    calibrate_light_frames(dir_input, transit_name, master_flat, master_bias)
+    calibrate_light_frames(dir_input, transit_name, master_flat, master_bias, target_coords_wcs)
     
