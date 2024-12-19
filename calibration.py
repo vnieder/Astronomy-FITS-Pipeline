@@ -16,7 +16,7 @@ def make_subdir(directory):
     calibrated_data.mkdir(exist_ok=True)
     return calibrated_data
 
-def create_master_frames(directory):
+def create_master_frames(directory, flip:bool):
     #we should not need to define another imagecollection
     main_path = Path(directory)
     files = ccdp.ImageFileCollection(main_path)
@@ -38,6 +38,8 @@ def create_master_frames(directory):
 
     master_bias.meta['combined'] = True
     master_bias.data = master_bias.data.astype('float32')
+    if(flip):
+        master_bias.data = np.flipud(master_bias.data)
     master_bias.write(calibrated_data / 'master_bias.fit', overwrite=True)
 
     '''
@@ -55,6 +57,8 @@ def create_master_frames(directory):
                                 sigma_clip_func=np.ma.median, signma_clip_dev_func=mad_std, mem_limit=350e6)
 
     master_flat.meta['combined'] = True
+    if(flip):
+        master_flat.data = np.flipud(master_flat.data)
     master_flat.data = master_flat.data.astype('float32')
     master_flat.write(calibrated_data / 'master_flat.fit', overwrite = True)
     
@@ -66,7 +70,7 @@ def create_master_frames(directory):
 def inv_median(a) -> int:
     return 1 / np.median(a)
     
-def calibrate_light_frames(directory:str, transit_name:str, master_bias:CCDData, master_flat:CCDData, target_coords_wcs:list) -> list:
+def calibrate_light_frames(directory:str, transit_name:str, master_bias:CCDData, master_flat:CCDData, target_coords_wcs:list, flip:bool) -> list:
     main_path = Path(directory)
     files = ccdp.ImageFileCollection(main_path)
     
@@ -91,6 +95,10 @@ def calibrate_light_frames(directory:str, transit_name:str, master_bias:CCDData,
         light_frame = CCDData.read(light, unit=u.adu)
         reduced = ccdp.ccd_process(light_frame, master_bias=master_bias, master_flat=master_flat)
         edit_header(reduced, ra, dec, pixscale, gain, readout_noise)
+        #flip the data array such that north is up if deemed neccessary
+        
+        if(flip):
+            reduced.data = np.flipud(reduced.data)
         #compress to single precision image
         reduced.data = reduced.data.astype('float32')
         light_frames.append(reduced)
@@ -149,9 +157,9 @@ if __name__ == "__main__":
     dir_input = '/Users/spencerfreeman/Desktop/PersonalCS/CurrentPipeline/test_input/'
     transit_name = 'qatar-5b'
     target_coords_wcs = ["00:28:12.944", "+42:03:40.95"]
-    master_flat, master_bias = create_master_frames(dir_input)
+    master_flat, master_bias = create_master_frames(dir_input, True)
     
     plt.imshow(master_bias.data)
     plt.show()
-    calibrate_light_frames(dir_input, transit_name, master_flat, master_bias, target_coords_wcs)
+    calibrate_light_frames(dir_input, transit_name, master_flat, master_bias, target_coords_wcs, True)
     
