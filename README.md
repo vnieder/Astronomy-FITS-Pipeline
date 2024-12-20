@@ -12,7 +12,7 @@ Image pipeline equipped for calibration and processing of FITS images. Analysis 
 
 - Comparison of uncalibrated and calibrated images, respectively (AstroImageJ window):
   
-![image](./static/curve1.png)
+![image](./static/comparison.png)
 
 - Current adjustments remove some background, and apply reasonable lens/CCD corrections.
 - Vignetting is visually reduced, as well as haze.
