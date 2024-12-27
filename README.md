@@ -23,7 +23,7 @@ Image pipeline equipped for calibration and processing of FITS images. Analysis 
 
 - Pipeline produces both seeing profiles and cumulative flux plots of target and comparison star.
 
-![image](./static/curvev1.png)
+![image](./static/lightCurveOutput.png)
 
 - Results from the first full usage trial indicate the need for relative flux calculation refinement, outlier considerations, and a method of target location invoving WCS transformations rather than loose pixel math.
 - A scientific method for deterining aperture placements and comparison stars is also necessary.
