@@ -25,7 +25,7 @@ Image pipeline equipped for calibration and processing of FITS images. Analysis 
 
 ![image](./static/lightCurveOutput.png)
 
-- Results from the first full usage trial indicate the need for relative flux calculation refinement, outlier considerations, and a method of target location invoving WCS transformations rather than loose pixel math.
+- Results from the first full usage trial indicate the need for relative flux calculation refinement, outlier considerations, and a method of target location invoving WCS transformations rather than loose catalogue/pixel math, assuming this proves computationally effective.
 - A scientific method for deterining aperture placements and comparison stars is also necessary.
 
 ## CSV Functionality
