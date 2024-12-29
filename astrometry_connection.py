@@ -6,7 +6,7 @@ This is a very simple way to access the Astrometry.net plate solving API.
 Some important details to note:
 - user must create an account at https://nova.astrometry.net to recieve an account/key.
 - server, key, and user information must be stored in users astrometry configuration file which may or may not exist automaticaly...
-- navigate to $HOME/.astropy/config/astroquery.cfg (or create the file if it doesen't exist) and format in the following manner:
+- navigate to $HOME/.astropy/config/astroquery.cfg (or create the file if it doesn't exist) and format in the following manner:
 +-----------------------------------------------------------------------------------------------------------------------------------+
 [astrometry_net]
 
