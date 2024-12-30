@@ -19,7 +19,7 @@ Median of flat and bias frames are computed and mapped to a color plot as shown 
 
 <div style="display: flex; justify-content: space-between;"> <img src="./static/sp.png" width="45%" alt="SP Image"/> <img src="./static/test.png" width="45%" alt="Test Image"/> </div>
 
-- Pipeline Output: The pipeline generates both seeing profiles and cumulative flux plots for the target and comparison stars (generally useful for verifying aperture radius and placement.
+- Pipeline Output: The pipeline generates both seeing profiles and cumulative flux plots for the target and comparison stars (generally useful for verifying aperture radius and placement).
 
 <div style="display: flex; justify-content: space-between;"> 
   <img src="./static/Qatar-5AIJ.png" width="45%" alt="Qatar-5 AstroImageJ"/> <img src="./static/Qatar-5.png" width="45%" alt="Qatar-5 Pipeline"/> 
