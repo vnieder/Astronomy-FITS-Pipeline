@@ -24,7 +24,7 @@ Image pipeline equipped for calibration and processing of FITS images. Analysis 
 - Pipeline produces both seeing profiles and cumulative flux plots of target and comparison star.
 
 <div>
-    <img src="./static/Qatar-5AIJ.png"/> <img src="./static/Qatar-5.png"/> 
+    <img src="./static/Qatar-5AIJ.png"/><img src="./static/Qatar-5.png"/> 
 </div>
 
 - Side by side: AstroImageJ light curve and STEPUP Pipeline light curve.
