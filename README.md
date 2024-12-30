@@ -28,7 +28,7 @@ Image pipeline equipped for calibration and processing of FITS images. Analysis 
     <img src="./static/Qatar-5.png" alt="Snow" style="width:100%">
   </div>
   <div class="column">
-    <img src="img_forest.jpg" alt="Forest" style="width:100%">
+    <img src="./static/Qatar-5AIJ.png" alt="Forest" style="width:100%">
   </div>
 </div>
 
