@@ -17,21 +17,17 @@ Image pipeline equipped for calibration and processing of FITS images. Analysis 
 - Current adjustments remove some background, and apply reasonable lens/CCD corrections.
 - Vignetting is visually reduced, as well as haze.
 
-![image](./static/sp.png)
-
-![image](./static/test.png)
+<div>
+    <img src="./static/sp.png"/> <img src="./static/test.png"/>
+</div>
 
 - Pipeline produces both seeing profiles and cumulative flux plots of target and comparison star.
 
-<div class="row">
-  <div class="column">
-    <img src="./static/Qatar-5.png" alt="Pipeline Output" style="width:50%">
-  </div>
-  <div class="column">
-    <img src="./static/Qatar-5AIJ.png" alt="AIJ Output" style="width:50%">
-  </div>
+<div>
+    <img src="./static/Qatar-5AIJ.png"/> <img src="./static/Qatar-5.png"/> 
 </div>
 
+- Side by side: AstroImageJ light curve and STEPUP Pipeline light curve.
 - Results from the first full usage trial indicate the need for relative flux calculation refinement, outlier considerations, and a method of target location invoving WCS transformations rather than loose catalogue/pixel math, assuming this proves computationally effective.
 - A scientific method for deterining aperture placements and comparison stars is also necessary.
 
