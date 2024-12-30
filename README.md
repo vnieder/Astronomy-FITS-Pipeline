@@ -25,10 +25,10 @@ Image pipeline equipped for calibration and processing of FITS images. Analysis 
 
 <div class="row">
   <div class="column">
-    <img src="./static/Qatar-5.png" alt="Snow" style="width:100%">
+    <img src="./static/Qatar-5.png" alt="Pipeline Output" style="width:50%">
   </div>
   <div class="column">
-    <img src="./static/Qatar-5AIJ.png" alt="Forest" style="width:100%">
+    <img src="./static/Qatar-5AIJ.png" alt="AIJ Output" style="width:50%">
   </div>
 </div>
 
