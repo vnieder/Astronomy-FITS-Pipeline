@@ -81,9 +81,7 @@ def calibrate_light_frames(directory:str, transit_name:str, master_bias:CCDData,
     c=SkyCoord(target_coords_wcs[0],target_coords_wcs[1],frame='icrs',unit=(u.hourangle,u.degree))
     ra=c.ra.degree; dec=c.dec.degree
     
-    gain_readout = get_gain_readout_noise(directory, "bias", "frp")
-    gain = gain_readout[0]
-    readout_noise = gain_readout[1]
+    gain, readout_noise = get_gain_readout_noise(directory, "bias", "frp")
     
     #obtain all of the light frames
     lights = files.files_filtered(imagetyp='Light Frame', include_path=True)
@@ -121,9 +119,9 @@ def edit_header(reduced, ra, dec, pixscale, gain, readout_noise):
     reduced.meta['GAIN']=(gain,'GAIN in e-/ADU')
     reduced.meta['RDNOISE']=(readout_noise,'readout noise in electron')
 
-def get_gain_readout_noise(directory:str, bias_indicator:str, flat_indicator:str) -> list:
-    bias_list = glob.glob(directory + f"*{bias_indicator}*")
-    flat_list = glob.glob(directory + f"*{flat_indicator}*")
+def get_gain_readout_noise(directory:str, bias_indicator:str, flat_indicator:str) -> tuple:
+    bias_list = glob.glob(directory + f"/*{bias_indicator}*")
+    flat_list = glob.glob(directory + f"/*{flat_indicator}*")
     print(len(bias_list))
     print(len(flat_list))
     bias_data = []
@@ -149,7 +147,7 @@ def get_gain_readout_noise(directory:str, bias_indicator:str, flat_indicator:str
     readnoise = gain * std_bias / np.sqrt(2)  
       
     print(f"gain: {gain}, readoout: {readnoise}")
-    return [gain, readnoise]
+    return (gain, readnoise)
 
 if __name__ == "__main__":
     #writes the master flat and master bias to the subdirectory using newer method

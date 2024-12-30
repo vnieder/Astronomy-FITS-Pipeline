@@ -249,6 +249,7 @@ def plot_light_curve(jd:list, lc_target_plot:list, lc_validation_plot:list, norm
     plt.legend()
     plt.savefig(directory_out+f"/{transit_name}")
     plt.show()
+    to_csv(jd[0,:], lc_target_plot, lc_validation_plot, norm_targ, norm_vali, directory_out, f"{transit_name}_measurements")
     print(sigma_clipped_stats(2.5*np.log10(lc_validation_plot),sigma=3,maxiters=3))
     
 def to_csv(jd:list, target_lc:list, validation_lc:list, norm_target:float, norm_vali:float, directory_out:str, filename:str):
