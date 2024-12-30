@@ -3,7 +3,7 @@
 
 - Primary Goal: Production of exoplanet transit light curves.
 - Development: Ongoing work on a graphical user interface (GUI) and existing features, decrease overhead computation.
-- Target Data: The pipeline aims to support analysis of existing TESS data with libraries such as Lightkurve and Astropy, as well as personal observational data.
+- Target Data: The pipeline aims to support analysis of existing TESS data with libraries such as Astropy, the Photutils sub-package, and personal/group observational data.
 - Functionality: Designed to work similarly to AstroImageJ, but in a more condensed and streamlined manner.
 
 ### Data and Output
