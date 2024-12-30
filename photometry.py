@@ -1,14 +1,7 @@
-import numpy as np
 from astropy.stats import sigma_clipped_stats
-import matplotlib.pyplot as plt
-import matplotlib.pyplot as plt
 from astropy.stats import SigmaClip
 from photutils.background import Background2D
 from photutils.detection import IRAFStarFinder
-from photutils.centroids import centroid_quadratic
-from astropy.stats import mad_std
-from astropy import units as u
-from astropy.nddata import CCDData
 from photutils.background import SExtractorBackground
 from photutils.segmentation import detect_sources
 from astropy.io import fits

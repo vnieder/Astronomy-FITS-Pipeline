@@ -1,5 +1,4 @@
 from astroquery.astrometry_net import AstrometryNet
-from load_frames import *
 
 ''' 
 This is a very simple way to access the Astrometry.net plate solving API. 

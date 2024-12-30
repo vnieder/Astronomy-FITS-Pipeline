@@ -1,15 +1,13 @@
 from astropy.stats import mad_std
 from astropy import units as u
 from astropy.nddata import CCDData
-import ccdproc as ccdp
-import ccdproc as ccdp
-from load_frames import *
-import matplotlib.pyplot as plt
-import numpy as np
 from pathlib import Path
 from astropy.coordinates import SkyCoord
-import glob
 from astropy.io import fits
+import ccdproc as ccdp
+import matplotlib.pyplot as plt
+import numpy as np
+import glob
 
 def make_subdir(directory):
     calibrated_data = Path(directory, 'master_frames_test')
