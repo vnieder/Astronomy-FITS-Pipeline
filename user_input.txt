@@ -6,7 +6,7 @@ Target Coordinates (pix): (2403.662364756954, 2018.2046627353204)
 Comparison Coordinates (pix): (1756.1089736736467, 2364.1375110432928)
 Validation Coordinates (pix): (1988.9627767690627, 1765.0694999895554)
 Source Detection Threshold: 15.
-light_frame_indicator: lrp
+Light Frame Indicator: lrp
 Bias Indicator: bias
 Flat Indicator: frp
 Catalogue Indicator: cat

@@ -8,16 +8,39 @@ def calibrate(dir:str, transit_name:str, wcs:list, flip:bool) -> list:
     lights_calibrated = calibrate_light_frames(dir, transit_name, master_flat, master_bias, wcs, flip)
     #in case we want to see master composite calibration frames
     return lights_calibrated
+
+def read_config_file(config_file_path:str) -> dict:
+    config = {}
+    with open(config_file_path, 'r') as file:
+        for line in file:
+            line = line.strip()
+            if not line:
+                continue
+            if ": " in line:
+                key, value = line.split(": ", 1)
+                config[key] = value
+    return config
     
 if __name__ == "__main__":
-    dir = '/Users/spencerfreeman/Desktop/pipeline_test'
-    transit_name = 'qatar-5b'
-    #[RA, DEC]
-    wcs = ["00:28:12.944", "+42:03:40.95"]
+    config_file_path = input("Enter path to config file: ")
+    config_dict = read_config_file(config_file_path)
+    
+    dir = config_dict["Main Directory (ex. /Users/spencerfreeman/Desktop/pipeline_test)"]
+    transit_name = config_dict["Target Name"]
+    wcs = config_dict["RA/DEC (ex. 00:28:12.944,+42:03:40.95)"]
+    x_targ,y_targ = config_dict["Target Coordinates (pix)"]
+    x_comp,y_comp = config_dict["Comparison Coordinates (pix)"]
+    x_vali,y_vali = config_dict["Validation Coordinates (pix)"]
+    threshold_multiplier = config_dict["Source Detection Threshold"]
+    catalogue_indicator = config_dict["Catalogue Indicator"]
+    light_frame_indicator = config_dict["Light Frame Indicator"]
+    output_dir = config_dict["Output Directory"]
+    main_title = config_dict["Main Plot Title (transit name)"]
+    date = config_dict["Observation Date (MM/DD/YYYY)"]
+    observer_name = config_dict["Observer Name"]
+    
     #lights_calibrated is a list of CCDData objects, arrays are accsessd by data attribute.
     lights_calibrated = calibrate(dir, transit_name, wcs, flip=True)
-    
-    print(lights_calibrated)
     
     '''
     Perform photometry writes catalogues of all sources in given frames to the specified output directory. These catalogues 
@@ -25,13 +48,6 @@ if __name__ == "__main__":
     comparison star flux, and validation star flux are returned and passed to the plot function. 
     '''
     ###photometry###
-    x_targ,y_targ = (2403.662364756954, 2018.2046627353204)
-    x_comp,y_comp = (1756.1089736736467, 2364.1375110432928)
-    x_vali,y_vali = (1988.9627767690627, 1765.0694999895554)
-    threshold_multiplier = 15.
-    catalogue_indicator = "cat"
-    light_frame_indicator = "lrp"
-    output_dir = '/Users/spencerfreeman/Desktop/pipeline_test/test_output'
     target_lc, comparison_lc, validation_lc = perform_photometry(light_frame_indicator, catalogue_indicator, output_dir, threshold_multiplier, 
                                                                  target_location=(x_targ,y_targ), comparison_location=(x_comp,y_comp), validation_location=(x_vali,y_vali))
     
@@ -40,10 +56,6 @@ if __name__ == "__main__":
     The function also generates and saves a csv file of the 
     '''
     ###plotting###
-    main_title = "Qatar-5"
-    date = "09/05/2024"
-    observer_name = "Marina Skuban"
-    
     plot(target_lc, comparison_lc, validation_lc, output_dir, main_title, date, observer_name)
    
     
