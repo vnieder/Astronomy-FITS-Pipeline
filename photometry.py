@@ -265,10 +265,10 @@ def to_csv(jd:list, target_lc:list, validation_lc:list, norm_target:float, norm_
     df.to_csv(file_path, index=False)
     print(f"CSV file created at: {file_path}")
 
-def perform_photometry(light_frame_indicator:str, catalogue_indicator:str, output_dir:str, threshold_multiplier:float, target_location:tuple, comparison_location:tuple, validation_location:tuple) -> tuple[list, list, list]:
+def perform_photometry(light_frame_indicator:str, catalogue_indicator:str, output_dir:str, threshold_multiplier:float, target_radius:int, target_location:tuple, comparison_location:tuple, validation_location:tuple) -> tuple[list, list, list]:
     write_photometric_catalogues(light_frame_indicator, output_dir, threshold_multiplier)
     calc_shifts_update_catalogues(output_dir)
-    target_lc, comparison_lc, validation_lc = calculate_light_curves(output_dir, catalogue_indicator, light_frame_indicator,n_radii=10, target_location=(x_targ,y_targ), comparison_location=(x_comp, y_comp), validation_location=(x_vali, y_vali))
+    target_lc, comparison_lc, validation_lc = calculate_light_curves(output_dir, catalogue_indicator, light_frame_indicator,n_radii=10, target_location=target_location, comparison_location=comparison_location, validation_location=validation_location)
     return (target_lc, comparison_lc, validation_lc)
 
 def plot(target_lc:list, comparison_lc:list, validation_lc:list, output_dir:str, transit_name:str, date:str, observer_name:str) -> None:
