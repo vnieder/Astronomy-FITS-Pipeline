@@ -27,7 +27,7 @@ def read_config_file(config_file_path:str) -> dict:
     return config
     
 if __name__ == "__main__":
-    config_file_path = "/Users/spencerfreeman/Desktop/PersonalCS/CurrentPipeline/Astro_Fits_Pipeline/config.txt"#input("Enter path to config file: ")
+    config_file_path = "/Users/spencerfreeman/Desktop/PersonalCS/CurrentPipeline/Astro_Fits_Pipeline/guide/config.txt"#input("Enter path to config file: ")
     config_dict = read_config_file(config_file_path)
     
     dir = config_dict["Main Directory (ex. /Users/spencerfreeman/Desktop/pipeline_test)"]
@@ -37,7 +37,7 @@ if __name__ == "__main__":
     x_targ,y_targ = tuple(config_dict["Target Coordinates (pix)"])
     x_comp,y_comp = tuple(config_dict["Comparison Coordinates (pix)"])
     x_vali,y_vali = tuple(config_dict["Validation Coordinates (pix)"])
-    threshold_multiplier = config_dict["Source Detection Threshold"]
+    threshold_multiplier = int(config_dict["Source Detection Threshold"])
     catalogue_indicator = config_dict["Catalogue Indicator"]
     light_frame_indicator = config_dict["Light Frame Indicator"]
     output_dir = config_dict["Output Directory"]

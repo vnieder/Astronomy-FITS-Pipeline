@@ -40,8 +40,8 @@ def write_photometric_catalogues(light_frame_indicator:str, output_dir:str, thre
         catfile=f'{output_dir}/{i+1}-cat.fits'
         print(file)
         bkg = background(file)
-        daofind = IRAFStarFinder(fwhm=3.0, threshold=threshold_multiplier*bkg.background_rms_median,exclude_border=True, sharplo=0.5, sharphi=2.0, roundlo=0.0, roundhi=0.7)
-        sources = daofind(data - bkg.background)
+        IRAFfind = IRAFStarFinder(fwhm=3.0, threshold=threshold_multiplier*bkg.background_rms_median,exclude_border=True, sharplo=0.5, sharphi=2.0, roundlo=0.0, roundhi=0.7)
+        sources = IRAFfind(data - bkg.background)
         #list of tuples representing position
         positions = [(ix,iy) for ix,iy in zip(sources['xcentroid'],sources['ycentroid'])] 
         #list of apertures, one for each of the radii given (10 total...)
@@ -229,8 +229,8 @@ def get_plotting_data(target_lc:list, comparison_lc:list, validation_lc:list, ia
 
 def plot_light_curve(jd:list, lc_target_plot:list, lc_validation_plot:list, norm_targ:float, norm_vali:float, time_axis_range:list, directory_out:str, transit_name:str, date:str, observer_name:str):
     plt.figure(figsize=(16,16))
-    plt.scatter(jd[0,:],lc_target_plot/(1.005*norm_targ),color='black', marker='o',s=6,label="Target")
-    plt.scatter(jd[0,:],lc_validation_plot/norm_vali-0.02,color='magenta', marker='o',s=6, label="Validation Star")
+    plt.scatter(jd[0,:],lc_target_plot/(1.005*norm_targ),color='black', marker='o',s=10,label="Target")
+    plt.scatter(jd[0,:],lc_validation_plot/norm_vali-0.02,color='magenta', marker='o',s=10, label="Validation Star")
     plt.plot(time_axis_range,[1.0,1.0],'b-',linewidth=.5)
     plt.plot(time_axis_range,[.980,.980],'b-',linewidth=.5)
     plt.ylim([0.970,1.01])
