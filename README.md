@@ -1,5 +1,5 @@
 # Astro_Fits_Pipeline
-#### An image pipeline for the calibration and processing of FITS images, equipped with differential photometric techniques. Dependencies include Numpy/Matplotlib, Astropy/Photutils, and Pandas (details in .env).
+#### An image pipeline for the calibration and processing of FITS images, equipped with differential photometric techniques. Dependencies include Numpy/Matplotlib, Astropy/Photutils, and Pandas (details in requirements.txt).
 
 - Primary Goal: Production of exoplanet transit light curves.
 - Development: Ongoing work on a graphical user interface (GUI) and existing features, decrease overhead computation.
