@@ -251,8 +251,8 @@ def to_csv(jd:list, target_lc:list, validation_lc:list, comparison_lc:list, norm
     """
     # Create a DataFrame from the arrays
     time_axis = np.array(jd)
-    target_lc = np.array(target_lc[iaper+1,:])/norm_target
-    validation_lc = np.array(validation_lc[iaper+1,:])/norm_vali
+    target_lc = np.array(target_lc)/norm_target
+    validation_lc = np.array(validation_lc)/norm_vali
     comparison_lc = np.array(comparison_lc[iaper+1,:])
     
     data = {'Time Axis': time_axis, 'Target Flux': target_lc, 'Validation Flux': validation_lc, 'Comparison Flux': comparison_lc}

@@ -25,7 +25,7 @@ def read_config_file(config_file_path:str) -> dict:
     return config
     
 if __name__ == "__main__":
-    config_file_path = input("Enter path to config file: ") # "/Users/spencerfreeman/Desktop/PersonalCS/CurrentPipeline/Astro_Fits_Pipeline/guide/config.txt"#
+    config_file_path = input("Enter full path of config.txt file: ") # "/Users/spencerfreeman/Desktop/PersonalCS/CurrentPipeline/Astro_Fits_Pipeline/guide/config.txt"#
     config_dict = read_config_file(config_file_path)
     
     dir = config_dict["Main Directory (ex. /Users/spencerfreeman/Desktop/pipeline_test)"]
