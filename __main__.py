@@ -1,7 +1,5 @@
 from calibration import create_master_frames, calibrate_light_frames
 from photometry import perform_photometry, plot
-import matplotlib.pyplot as plt
-import numpy as np
 import ast
 
 def calibrate(dir:str, transit_name:str, wcs:list, flip:bool) -> list:
@@ -27,13 +25,14 @@ def read_config_file(config_file_path:str) -> dict:
     return config
     
 if __name__ == "__main__":
-    config_file_path = "/Users/spencerfreeman/Desktop/PersonalCS/CurrentPipeline/Astro_Fits_Pipeline/guide/config.txt"#input("Enter path to config file: ")
+    config_file_path = input("Enter path to config file: ") # "/Users/spencerfreeman/Desktop/PersonalCS/CurrentPipeline/Astro_Fits_Pipeline/guide/config.txt"#
     config_dict = read_config_file(config_file_path)
     
     dir = config_dict["Main Directory (ex. /Users/spencerfreeman/Desktop/pipeline_test)"]
     transit_name = config_dict["Target Name"]
     wcs = config_dict["RA/DEC (ex. 00:28:12.944,+42:03:40.95)"]
-    target_radius = int(config_dict["Target Radius"])
+    #target radius doubles as the aperture number
+    target_radius = int(config_dict["Target Radius"]) 
     x_targ,y_targ = tuple(config_dict["Target Coordinates (pix)"])
     x_comp,y_comp = tuple(config_dict["Comparison Coordinates (pix)"])
     x_vali,y_vali = tuple(config_dict["Validation Coordinates (pix)"])
@@ -44,6 +43,7 @@ if __name__ == "__main__":
     main_title = config_dict["Main Plot Title (transit name)"]
     date = config_dict["Observation Date (MM/DD/YYYY)"]
     observer_name = config_dict["Observer Name"]
+    iaper=target_radius
     
     #lights_calibrated is a list of CCDData objects, arrays are accsessd by data attribute.
     lights_calibrated = calibrate(dir, transit_name, wcs, flip=True)
@@ -62,7 +62,7 @@ if __name__ == "__main__":
     The function also generates and saves a csv file of the 
     '''
     ###plotting###
-    plot(target_lc, comparison_lc, validation_lc, output_dir, main_title, date, observer_name)
+    plot(target_lc, comparison_lc, validation_lc, iaper, output_dir, main_title, date, observer_name)
    
     
         

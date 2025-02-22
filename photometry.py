@@ -227,7 +227,7 @@ def get_plotting_data(target_lc:list, comparison_lc:list, validation_lc:list, ia
     time_axis_range=[np.min(target_lc[0,:]),np.max(target_lc[0,:])]
     return lc_target_plot, lc_validation_plot, error_target, error_valiation, norm_targ, norm_vali, time_axis_range
 
-def plot_light_curve(jd:list, lc_target_plot:list, lc_validation_plot:list, norm_targ:float, norm_vali:float, time_axis_range:list, directory_out:str, transit_name:str, date:str, observer_name:str):
+def plot_light_curve(jd:list, lc_target_plot:list, lc_validation_plot:list, comparison_lc:list, norm_targ:float, norm_vali:float, iaper:int, time_axis_range:list, directory_out:str, transit_name:str, date:str, observer_name:str):
     plt.figure(figsize=(16,16))
     plt.scatter(jd[0,:],lc_target_plot/(1.005*norm_targ),color='black', marker='o',s=10,label="Target")
     plt.scatter(jd[0,:],lc_validation_plot/norm_vali-0.02,color='magenta', marker='o',s=10, label="Validation Star")
@@ -242,18 +242,18 @@ def plot_light_curve(jd:list, lc_target_plot:list, lc_validation_plot:list, norm
     plt.legend()
     plt.savefig(directory_out+f"/{transit_name}")
     plt.show()
-    to_csv(jd[0,:], lc_target_plot, lc_validation_plot, norm_targ, norm_vali, directory_out, f"{transit_name}_measurements")
+    to_csv(jd[0,:], lc_target_plot, lc_validation_plot, comparison_lc, norm_targ, norm_vali, iaper, directory_out, f"{transit_name}_measurements")
     print(sigma_clipped_stats(2.5*np.log10(lc_validation_plot),sigma=3,maxiters=3))
     
-def to_csv(jd:list, target_lc:list, validation_lc:list, norm_target:float, norm_vali:float, directory_out:str, filename:str):
+def to_csv(jd:list, target_lc:list, validation_lc:list, comparison_lc:list, norm_target:float, norm_vali:float, iaper:int, directory_out:str, filename:str):
     """
     Takes two arrays, creates a DataFrame, and saves it as a CSV file.
     """
     # Create a DataFrame from the arrays
     time_axis = np.array(jd)
-    target_lc = np.array(target_lc)/norm_target
-    validation_lc = np.array(validation_lc)/norm_vali
-    comparison_lc = np.array(comparison_lc)
+    target_lc = np.array(target_lc[iaper+1,:])/norm_target
+    validation_lc = np.array(validation_lc[iaper+1,:])/norm_vali
+    comparison_lc = np.array(comparison_lc[iaper+1,:])
     
     data = {'Time Axis': time_axis, 'Target Flux': target_lc, 'Validation Flux': validation_lc, 'Comparison Flux': comparison_lc}
     df = pd.DataFrame(data)
@@ -271,9 +271,9 @@ def perform_photometry(light_frame_indicator:str, catalogue_indicator:str, outpu
     target_lc, comparison_lc, validation_lc = calculate_light_curves(output_dir, catalogue_indicator, light_frame_indicator,n_radii=10, target_location=target_location, comparison_location=comparison_location, validation_location=validation_location)
     return (target_lc, comparison_lc, validation_lc)
 
-def plot(target_lc:list, comparison_lc:list, validation_lc:list, output_dir:str, transit_name:str, date:str, observer_name:str) -> None:
-    lc_target_plot, lc_validation_plot, error_target, error_valiation, norm_targ, norm_vali, time_axis_range = get_plotting_data(target_lc, comparison_lc, validation_lc, iaper=6)
-    plot_light_curve(target_lc, lc_target_plot, lc_validation_plot, norm_targ, norm_vali, time_axis_range, output_dir, transit_name, date, observer_name)
+def plot(target_lc:list, comparison_lc:list, validation_lc:list, iaper:int, output_dir:str, transit_name:str, date:str, observer_name:str) -> None:
+    lc_target_plot, lc_validation_plot, error_target, error_valiation, norm_targ, norm_vali, time_axis_range = get_plotting_data(target_lc, comparison_lc, validation_lc, iaper)
+    plot_light_curve(target_lc, lc_target_plot, lc_validation_plot, comparison_lc, norm_targ, norm_vali, iaper, time_axis_range, output_dir, transit_name, date, observer_name)
     
 #current constants
 threshold_multiplier = 15.
@@ -283,6 +283,7 @@ threshold_multiplier = 15.
 x_targ,y_targ = (2403.662364756954, 2018.2046627353204)
 x_comp,y_comp = (1756.1089736736467, 2364.1375110432928)
 x_vali,y_vali = (1988.9627767690627, 1765.0694999895554)
+iaper=6
 ###plotting###
 #these should be provided via txt file.
 transit_name = "Qatar-5"
@@ -297,6 +298,5 @@ if __name__ == "__main__":
     calc_shifts_update_catalogues(output_dir)
     target_lc, comparison_lc, validation_lc = calculate_light_curves(output_dir, catalogue_indicator, light_frame_indicator,n_radii=10, target_location=(x_targ,y_targ), comparison_location=(x_comp, y_comp), validation_location=(x_vali, y_vali))
     #plotting related calls/variables
-    lc_target_plot, lc_validation_plot, error_target, error_valiation, norm_targ, norm_vali, time_axis_range = get_plotting_data(target_lc, comparison_lc, validation_lc, iaper=6)
-    plot_light_curve(target_lc, lc_target_plot, lc_validation_plot, norm_targ, norm_vali, time_axis_range, output_dir, transit_name, date, observer_name)
-    to_csv(target_lc[0,:], lc_target_plot, lc_validation_plot, norm_targ, norm_vali, output_dir, "Qatar-5.png")
+    lc_target_plot, lc_validation_plot, error_target, error_valiation, norm_targ, norm_vali, time_axis_range = get_plotting_data(target_lc, comparison_lc, validation_lc, iaper)
+    plot_light_curve(target_lc, lc_target_plot, lc_validation_plot, comparison_lc, norm_targ, norm_vali, iaper, time_axis_range, output_dir, transit_name, date, observer_name)
