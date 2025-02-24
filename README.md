@@ -12,7 +12,7 @@ Clone the repo:
       git clone https://github.com/spencermfreeman/Astro_Fits_Pipeline
       
 # Setup Environment
-With conda:
+With conda (requirements.txt located in the guide directory):
 
       conda create --name fits_pipeline_env --file requirements.txt
 
