@@ -1,8 +1,6 @@
-STEPUP Data Processing Configuration File, write all data in a consistent format (no trailing / in paths, avoid extra spaces).
-
 --- File I/O ---
-Main Directory (ex. /Users/spencerfreeman/Desktop/pipeline_test): /Users/spencerfreeman/Desktop/pipeline_test
-Output Directory: /Users/spencerfreeman/Desktop/pipeline_test/test_output
+Main Directory: /Users/vincentniedermayer/Desktop/test
+Output Directory: /Users/vincentniedermayer/Desktop/test/test_output
 Light Frame Indicator: lrp
 Bias Indicator: bias
 Flat Indicator: frp
@@ -10,7 +8,7 @@ Catalogue Indicator: cat
 Target Name: qatar-5b
 
 --- Photometry Related ---
-RA/DEC (ex. 00:28:12.944,+42:03:40.95): 00:28:12.944,+42:03:40.95
+RA/DEC: 00:28:12.944,+42:03:40.95
 Target Radius: 6
 Target Coordinates (pix): (2403.662364756954,2018.2046627353204)
 Comparison Coordinates (pix): (1756.1089736736467,2364.1375110432928)
@@ -19,5 +17,5 @@ Source Detection Threshold: 15
 
 --- Plotting Information ---
 Main Plot Title (transit name): Qatar-5
-Observation Date (MM/DD/YYYY): 09/05/2024
-Observer Name: Spencer Freeman
+Observation Date (MM/DD/YYYY): 03/13/2025
+Observer Name: Vincent
