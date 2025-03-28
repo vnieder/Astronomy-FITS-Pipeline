@@ -4,9 +4,8 @@ import threading
 import os
 import ast
 
-# Import pipeline functions from existing modules
-from calibration import create_master_frames, calibrate_light_frames
-from photometry import perform_photometry, plot
+from calibration import Calibration
+from photometry import Photometry
 
 CONFIG_PATH = os.path.join("guide", "config.txt")
 
@@ -36,14 +35,9 @@ CONFIG_SECTIONS = {
 }
 
 def load_config():
-    """
-    Loads configuration from CONFIG_PATH and returns a dictionary.
-    Expects a file with sections (denoted by --- Section Name ---) and key: value pairs.
-    """
     config = {}
     if not os.path.exists(CONFIG_PATH):
         return config
-
     current_section = None
     with open(CONFIG_PATH, "r") as f:
         for line in f:
@@ -55,16 +49,10 @@ def load_config():
                 continue
             if ":" in line:
                 key, value = line.split(":", 1)
-                key = key.strip()
-                value = value.strip()
-                config[key] = value
+                config[key.strip()] = value.strip()
     return config
 
 def save_config(config):
-    """
-    Saves the config dictionary to CONFIG_PATH using the predefined section and key order.
-    Paths will be written without trailing slashes and extra spaces.
-    """
     lines = []
     for section, keys in CONFIG_SECTIONS.items():
         lines.append(f"--- {section} ---")
@@ -81,22 +69,19 @@ def save_config(config):
 def run_pipeline_manual(config_dict, log_callback):
     try:
         log_callback("Using manual configuration input...")
-
         wcs_val = config_dict["RA/DEC"]
         if isinstance(wcs_val, str) and ',' in wcs_val:
             wcs = [s.strip() for s in wcs_val.split(',')]
         else:
             wcs = wcs_val
-
         target_coords = ast.literal_eval(config_dict["Target Coordinates (pix)"])
         comparison_coords = ast.literal_eval(config_dict["Comparison Coordinates (pix)"])
         validation_coords = ast.literal_eval(config_dict["Validation Coordinates (pix)"])
-
         main_directory = config_dict["Main Directory"]
         output_dir = config_dict["Output Directory"]
         transit_name = config_dict["Target Name"]
         target_radius = int(config_dict["Target Radius"])
-        threshold_multiplier = int(config_dict["Source Detection Threshold"])
+        threshold_multiplier = float(config_dict["Source Detection Threshold"])
         catalogue_indicator = config_dict["Catalogue Indicator"]
         light_frame_indicator = config_dict["Light Frame Indicator"]
         main_title = config_dict["Main Plot Title (transit name)"]
@@ -104,23 +89,19 @@ def run_pipeline_manual(config_dict, log_callback):
         observer_name = config_dict["Observer Name"]
 
         log_callback("Starting calibration...")
-        master_flat, master_bias = create_master_frames(main_directory, flip=True)
+        calib = Calibration(main_directory, flip=True)
+        master_bias, master_flat = calib.create_master_frames()
         log_callback("Master frames created.")
-
-        lights_calibrated = calibrate_light_frames(main_directory, transit_name, master_flat, master_bias, wcs, flip=True)
+        calib.calibrate_light_frames(transit_name, master_bias, master_flat, wcs)
         log_callback("Light frames calibrated.")
 
         log_callback("Performing photometry...")
-        target_lc, comparison_lc, validation_lc = perform_photometry(
-            light_frame_indicator, catalogue_indicator, output_dir, threshold_multiplier, target_radius,
-            target_location=target_coords,
-            comparison_location=comparison_coords,
-            validation_location=validation_coords
-        )
+        photom = Photometry(output_dir, threshold_multiplier, catalogue_indicator, light_frame_indicator, n_radii=target_radius)
+        target_lc, comparison_lc, validation_lc = photom.perform_photometry(target_coords, comparison_coords, validation_coords)
         log_callback("Photometry completed.")
 
         log_callback("Generating plots and CSV outputs...")
-        plot(target_lc, comparison_lc, validation_lc, target_radius, output_dir, main_title, date, observer_name)
+        photom.plot(target_lc, comparison_lc, validation_lc, target_radius, transit_name, date, observer_name)
         log_callback("Pipeline completed successfully!")
     except Exception as e:
         log_callback(f"Error: {str(e)}")
@@ -132,32 +113,24 @@ class AstroPipelineGUI(ttk.Frame):
         master.title("Astro FITS Pipeline - Configuration")
         master.geometry("850x700")
         self.pack(fill=tk.BOTH, expand=True)
-        
         self.entries = {}
-        
         notebook = ttk.Notebook(self)
         notebook.pack(fill=tk.BOTH, expand=True, pady=10)
-
         file_io_frame = ttk.LabelFrame(notebook, text="File I/O")
         notebook.add(file_io_frame, text="File I/O")
         self.create_file_io_section(file_io_frame)
-        
         photo_frame = ttk.LabelFrame(notebook, text="Photometry")
         notebook.add(photo_frame, text="Photometry")
         self.create_photometry_section(photo_frame)
-        
         plot_frame = ttk.LabelFrame(notebook, text="Plotting")
         notebook.add(plot_frame, text="Plotting")
         self.create_plotting_section(plot_frame)
-        
         run_btn = ttk.Button(self, text="Run Pipeline", command=self.start_pipeline)
         run_btn.pack(pady=10)
-        
         self.log_text = scrolledtext.ScrolledText(self, width=100, height=15, state=tk.NORMAL)
         self.log_text.pack(pady=10, fill=tk.BOTH, expand=True)
-        
         self.load_config_into_fields()
-    
+
     def create_file_io_section(self, parent):
         fields = [
             ("Main Directory", "directory"),
@@ -175,10 +148,9 @@ class AstroPipelineGUI(ttk.Frame):
             entry.grid(row=i, column=1, padx=5, pady=5)
             self.entries[label_text] = entry
             if field_type == "directory":
-                btn = ttk.Button(parent, text="Browse", 
-                                 command=lambda e=entry: self.browse_directory(e))
+                btn = ttk.Button(parent, text="Browse", command=lambda e=entry: self.browse_directory(e))
                 btn.grid(row=i, column=2, padx=5, pady=5)
-    
+
     def create_photometry_section(self, parent):
         fields = [
             ("RA/DEC", "text"),
@@ -194,7 +166,7 @@ class AstroPipelineGUI(ttk.Frame):
             entry = ttk.Entry(parent, width=50)
             entry.grid(row=i, column=1, padx=5, pady=5)
             self.entries[label_text] = entry
-    
+
     def create_plotting_section(self, parent):
         fields = [
             ("Main Plot Title (transit name)", "text"),
@@ -207,17 +179,17 @@ class AstroPipelineGUI(ttk.Frame):
             entry = ttk.Entry(parent, width=50)
             entry.grid(row=i, column=1, padx=5, pady=5)
             self.entries[label_text] = entry
-    
+
     def browse_directory(self, entry_widget):
         directory = filedialog.askdirectory(title="Select Directory")
         if directory:
             entry_widget.delete(0, tk.END)
             entry_widget.insert(0, directory)
-    
+
     def log(self, message):
         self.log_text.insert(tk.END, message + "\n")
         self.log_text.see(tk.END)
-    
+
     def collect_config(self):
         config = {}
         for key, entry in self.entries.items():
@@ -233,7 +205,7 @@ class AstroPipelineGUI(ttk.Frame):
             if key in config:
                 entry.delete(0, tk.END)
                 entry.insert(0, config[key])
-    
+
     def start_pipeline(self):
         config_dict = self.collect_config()
         save_config(config_dict)
