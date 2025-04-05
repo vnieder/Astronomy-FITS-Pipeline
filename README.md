@@ -11,7 +11,7 @@
 
 Clone the repo:
 
-      git clone https://github.com/spencermfreeman/Astro_Fits_Pipeline
+      git clone https://github.com/vnieder/Astronomy-FITS-Pipeline.git
 
 # Setup Environment
 
