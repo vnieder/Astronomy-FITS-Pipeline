@@ -13,7 +13,6 @@ Clone the repo:
 
       git clone https://github.com/spencermfreeman/Astro_Fits_Pipeline
 
-
 # Setup Environment
 
 With conda (requirements.txt located in the guide directory):
@@ -30,7 +29,9 @@ then activate the environment:
 2. Ensure config.txt is in /guide/ directory
 3. Navigate to the directory containing gui.py and:
 
+   ```bash
    python gui.py
+   ```
 
 # Data and Output
 
